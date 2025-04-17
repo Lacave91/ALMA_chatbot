@@ -10,3 +10,5 @@ edge-tts
 pygame
 speechrecognition
 langsmith
+streamlit-webrtc
+av
