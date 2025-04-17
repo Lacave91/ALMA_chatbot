@@ -73,12 +73,17 @@
 ## 💼 Setup & Running Locally
 
 1. Clone this repo:
-git clone https://github.com/your-username/alma-chatbot.git
+   
+- git clone https://github.com/your-username/alma-chatbot.git
 cd alma-chatbot
+
 2. pip install -r requirements.txt
+   
 3. Add a .env file:
-OPENAI_API_KEY=your-key
-PINECONE_API_KEY=your-key
-FFMPEG_PATH=/your/path/to/ffmpeg
+   
+- OPENAI_API_KEY=your-key
+- PINECONE_API_KEY=your-key
+- FFMPEG_PATH=/your/path/to/ffmpeg
+
 4. Run the app:
-streamlit run ALMA_app.py
+- streamlit run ALMA_app.py
