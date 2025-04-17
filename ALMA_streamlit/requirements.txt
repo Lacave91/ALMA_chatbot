@@ -1,0 +1,12 @@
+streamlit
+openai
+python-dotenv
+langchain
+langchain-openai
+langchain-pinecone
+pinecone-client
+pydub
+edge-tts
+pygame
+speechrecognition
+langsmith
