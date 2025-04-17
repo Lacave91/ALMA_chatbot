@@ -1,4 +1,4 @@
-"""# ALMA — Multilingual AI Chatbot for YouTube Video Q&A
+# ALMA — Multilingual AI Chatbot for YouTube Video Q&A
 
 **ALMA** is a multimodal, multilingual AI assistant designed to provide warm, emotionally intelligent answers to questions about health and wellness. Built using GPT-4, LangChain, OpenAI embeddings, and Pinecone vector stores, ALMA retrieves relevant information from YouTube videos and can even recommend helpful video segments in both English and Spanish.
 
