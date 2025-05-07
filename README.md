@@ -42,7 +42,7 @@
 
 ## 🎤 Voice Interaction
 - **Input**: Google Speech Recognition via `speech_recognition`
-- **Output**: Edge TTS with natural voices (e.g., JennyNeural, ElviraNeural)
+- **Output**: Edge TTS with natural voice
 - Option to choose between text or voice at runtime
 
 ---
