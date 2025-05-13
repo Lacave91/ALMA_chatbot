@@ -2,7 +2,7 @@
 
 **ALMA** is a multimodal, multilingual AI assistant designed to provide warm, emotionally intelligent answers to questions about health and wellness. Built using GPT-4, LangChain, OpenAI embeddings, and Pinecone vector stores, ALMA retrieves relevant information from YouTube videos and can even recommend helpful video segments in both English and Spanish.
 
-<img src="Images/ALMA_face.png" alt="ALMA chatbot" width="200"/>
+<img src="Images/ALMA_face.png" alt="ALMA chatbot" width="300"/>
 
 ---
 
@@ -89,3 +89,5 @@ cd alma-chatbot
 
 4. Run the app:
 - streamlit run ALMA_app.py
+
+<img src="Images/ALMA_screenshot.png" alt="ALMA chatbot" width="600"/>
