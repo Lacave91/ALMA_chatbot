@@ -1,8 +1,32 @@
-# ALMA — Multilingual AI Chatbot for YouTube Video Q&A
+# 🧠 ALMA — Multilingual AI Chatbot for YouTube Video Q&A
 
-**ALMA** is a multimodal, multilingual AI assistant designed to provide warm, emotionally intelligent answers to questions about health and wellness. Built using GPT-4, LangChain, OpenAI embeddings, and Pinecone vector stores, ALMA retrieves relevant information from YouTube videos and can even recommend helpful video segments in both English and Spanish.
+> _In the U.S., private health insurance can cost over **$500/month** — and in countries like Spain, **crowded public hospitals** often lead to long waits and brief, impersonal consultations._  
+>  
+> Whether you're navigating complex health systems or just looking for trustworthy guidance, access to **clear, emotionally intelligent health information** has never been more critical.  
+>  
+> **That's where ALMA comes in.**
+
+---
+
+## 💡 What is ALMA?
+
+**ALMA** is a **multimodal**, **multilingual** AI assistant designed to deliver warm, emotionally intelligent answers to health and wellness questions. It analyzes and retrieves relevant content from **YouTube videos**, allowing users to ask questions and receive precise answers — along with recommended video segments — in both **English** and **Spanish**.
+
 
 <img src="Images/ALMA_face.png" alt="ALMA chatbot" width="300"/>
+
+---
+
+## 🧪 Sources of Knowledge
+
+ALMA uses health-related video content from trusted experts, including:
+- **Andrew Huberman**
+- **Dr. Rangan Chatterjee**
+- **Dr. Vonda Wright**
+- **Dr. Laurie Santos** (via **Mel Robbins Podcast**)
+
+These sources provide diverse, research-based perspectives on physical, mental, and emotional well-being.
+
 
 ---
 
