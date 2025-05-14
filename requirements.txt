@@ -1,6 +1,7 @@
 streamlit
 streamlit-webrtc
 langchain
+langchain-openai
 openai
 pinecone-client
 edge-tts
