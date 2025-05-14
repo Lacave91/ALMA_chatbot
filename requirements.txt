@@ -1,10 +1,11 @@
 streamlit
-openai
 langchain
-langsmith
-python-dotenv
+openai
 pinecone-client
-pydub
-pygame
-SpeechRecognition
+streamlit-webrtc
 edge-tts
+speechrecognition
+sounddevice
+scipy
+pillow
+python-dotenv
