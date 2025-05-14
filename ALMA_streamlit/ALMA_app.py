@@ -160,7 +160,7 @@ st.set_page_config(page_title="ALMA - AI Assistant", layout="centered")
 st.title("🌿 Welcome / Bienvenido 🌿")
 
 #  Show ALMA image
-image = Image.open("Images/ALMA_person.png")
+image = Image.open("/workspaces/ALMA_chatbot/ALMA person.png")
 st.image(image, width=250) 
 
 lang = st.radio("Choose your language / Elige tu idioma", ["English", "Español"])
