@@ -1,11 +1,11 @@
 streamlit
+streamlit-webrtc
 langchain
 openai
 pinecone-client
-streamlit-webrtc
 edge-tts
 speechrecognition
-sounddevice
 scipy
 pillow
 python-dotenv
+av
