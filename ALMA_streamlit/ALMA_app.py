@@ -1,4 +1,4 @@
-# ALMA Streamlit App with Voice Support (Finalized Version)
+# ALMA Streamlit App (Updated for Browser Voice Input)
 import os
 import tempfile
 import asyncio
@@ -8,56 +8,40 @@ import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
 import numpy as np
-import sounddevice as sd
-from scipy.io.wavfile import write
 import speech_recognition as sr
 import edge_tts
+from scipy.io.wavfile import write
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.prompts import ChatPromptTemplate
 from pinecone import Pinecone
-from streamlit_webrtc import webrtc_streamer, AudioProcessorBase, WebRtcMode
+
+from streamlit_webrtc import webrtc_streamer, WebRtcMode
+import av
+import queue
 
 # Load .env
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "").strip()
 
-
 # Setup
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 FFMPEG_PATH = os.getenv("FFMPEG_PATH", r"C:\\ffmpeg\\...\\bin")
 os.environ["PATH"] += os.pathsep + FFMPEG_PATH
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "ALMA-Assistant"
 
 # LangChain Setup
-print("📌 Loaded Pinecone key:", os.getenv("PINECONE_API_KEY"))
 pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index("alma-index")
 embeddings = OpenAIEmbeddings()
-
 vectorstore = PineconeVectorStore(index_name="alma-index", embedding=embeddings)
 retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
-
 video_vectorstore = PineconeVectorStore(index_name="alma-video-index", embedding=embeddings)
 video_retriever = video_vectorstore.as_retriever(search_kwargs={"k": 2})
-
 llm = ChatOpenAI(model="gpt-4")
 
-# Recorder class
-class AudioRecorder(AudioProcessorBase):
-    def __init__(self):
-        self.frames = []
-
-    def recv_queued(self, frames):
-        for frame in frames:
-            audio = frame.to_ndarray()
-            print("🔈 Got audio frame with shape:", audio.shape)
-            self.frames.append(audio)
-        return frames[-1] if frames else None
-    
 # Text-to-speech
 async def speak_alma_edge(text, lang):
     voice = "en-US-JennyNeural" if lang == "English" else "es-ES-ElviraNeural"
@@ -66,7 +50,8 @@ async def speak_alma_edge(text, lang):
     communicate = edge_tts.Communicate(text=text, voice=voice, rate="+10%")
     await communicate.save(temp_path)
     st.audio(temp_path, format="audio/mp3")
-# Handle response logic
+
+# Response Logic
 def run_alma_response(user_input, lang):
     history = st.session_state.chat_history
     full_question = "Conversation so far:\n" + "\n".join([
@@ -216,9 +201,6 @@ for msg in st.session_state.chat_history:
         st.markdown(user_msg)
     with st.chat_message("assistant"):
         st.markdown(alma_msg)
-# Handle user input
-import sounddevice as sd
-from scipy.io.wavfile import write
 
 user_input = ""
 
@@ -226,63 +208,47 @@ if input_mode == "Text":
     user_input = st.chat_input("Type your message" if lang == "English" else "Escribe tu mensaje")
 
 elif input_mode == "Voice":
-    st.subheader("🎙️ Voice Input")
+    import threading
 
-    # Setup state
-    if "recording" not in st.session_state:
-        st.session_state.recording = False
-    if "audio_data" not in st.session_state:
-        st.session_state.audio_data = None
+    audio_queue = queue.Queue()
 
-    def start_recording():
-        st.session_state.recording = True
-        st.session_state.fs = 44100
-        st.session_state.max_duration = 15  # seconds
-        st.session_state.audio_data = sd.rec(
-            int(st.session_state.max_duration * st.session_state.fs),
-            samplerate=st.session_state.fs,
-            channels=1,
-            dtype='int16'
-        )
-        st.info("🎤 Recording... Speak now (up to 15s)")
+    class AudioProcessor:
+        def recv(self, frame: av.AudioFrame) -> av.AudioFrame:
+            audio = frame.to_ndarray().flatten()
+            audio_queue.put(audio)
+            return frame
 
-    def stop_recording():
-        sd.stop()
-        st.session_state.recording = False
-        st.success("🛑 Recording stopped.")
+    st.subheader("🎙️ Speak to ALMA")
+    webrtc_ctx = webrtc_streamer(
+        key="alma-audio",
+        mode=WebRtcMode.SENDONLY,
+        in_audio_stream=True,
+        audio_processor_factory=AudioProcessor,
+        media_stream_constraints={"audio": True, "video": False},
+        async_processing=True,
+    )
 
-        # Save to temp .wav file
-        fs = st.session_state.fs
-        audio = st.session_state.audio_data
-        temp_wav = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
-        write(temp_wav.name, fs, audio)
+    if st.button("🛑 Transcribe and Ask ALMA"):
+        if webrtc_ctx.state.playing:
+            st.info("Processing audio...")
+            recognizer = sr.Recognizer()
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+                audio_data = np.concatenate(list(audio_queue.queue)).astype(np.int16)
+                write(f.name, 44100, audio_data)
+                with sr.AudioFile(f.name) as source:
+                    audio = recognizer.record(source)
 
-        # Transcribe using Google Speech Recognition
-        recognizer = sr.Recognizer()
-        with sr.AudioFile(temp_wav.name) as source:
-            audio_data = recognizer.record(source)
+                try:
+                    transcript = recognizer.recognize_google(
+                        audio,
+                        language="es-ES" if lang == "Español" else "en-US"
+                    )
+                    st.success(f"📝 You said: {transcript}")
+                    user_input = transcript
+                except sr.UnknownValueError:
+                    st.error("⚠️ Sorry, I couldn't understand what you said.")
+                except sr.RequestError:
+                    st.error("⚠️ Could not reach the speech recognition service.")
 
-        try:
-            transcript = recognizer.recognize_google(
-                audio_data,
-                language="es-ES" if lang == "Español" else "en-US"
-            )
-            st.text_area("📝 Transcript", transcript, height=100)
-            global user_input
-            user_input = transcript
-        except sr.UnknownValueError:
-            st.error("⚠️ Sorry, I couldn't understand that.")
-        except sr.RequestError:
-            st.error("⚠️ Speech recognition service is not available right now.")
-
-    # Show buttons
-    if not st.session_state.recording:
-        if st.button("🔴 Start Recording"):
-            start_recording()
-    else:
-        if st.button("🛑 Stop Recording"):
-            stop_recording()
-
-# Run ALMA
 if user_input:
     run_alma_response(user_input, lang)
