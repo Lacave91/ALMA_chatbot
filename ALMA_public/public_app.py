@@ -2,7 +2,6 @@
 import os
 import tempfile
 import asyncio
-import pinecone
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -16,11 +15,9 @@ import edge_tts
 # Load environment variables
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "").strip()
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
-# Setup LangChain
+# Set up Pinecone and LangChain
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-index = pc.Index("alma-index")
 embeddings = OpenAIEmbeddings()
 
 vectorstore = PineconeVectorStore(index_name="alma-index", embedding=embeddings)
@@ -30,6 +27,7 @@ video_vectorstore = PineconeVectorStore(index_name="alma-video-index", embedding
 video_retriever = video_vectorstore.as_retriever(search_kwargs={"k": 2})
 
 llm = ChatOpenAI(model="gpt-4")
+
 
 # Text-to-speech
 async def speak_alma_edge(text, lang):
