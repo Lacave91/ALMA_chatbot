@@ -96,22 +96,34 @@ These sources provide diverse, research-based perspectives on physical, mental, 
 
 ---
 
-## 💼 Setup & Running Locally
+## 💼 Setup & Running Locally (with voice input)
 
-1. Clone this repo:
+ Clone this repo:
    
-- git clone https://github.com/your-username/alma-chatbot.git
+> git clone https://github.com/your-username/alma-chatbot.git
 cd alma-chatbot
 
-2. pip install -r requirements.txt
+> pip install -r requirements.txt
    
-3. Add a .env file:
+Add a .env file:
    
-- OPENAI_API_KEY=your-key
-- PINECONE_API_KEY=your-key
-- FFMPEG_PATH=/your/path/to/ffmpeg
+> OPENAI_API_KEY=your-key
+>
+> PINECONE_API_KEY=your-key
+> 
+> FFMPEG_PATH=/your/path/to/ffmpeg
 
-4. Run the app:
-- streamlit run ALMA_app.py
+ Run the app:
+> streamlit run ALMA_app.py
 
 <img src="Images/ALMA_screenshot.png" alt="ALMA chatbot" width="600"/>
+
+---
+
+## 🌐 Run Publicly (Text-Only Version)
+
+You can try the public version here:
+
+👉 https://almachatbot-dbeduj6pzce3n5j2r8ejrc.streamlit.app
+
+This version supports text input only, due to browser and platform limitations on audio recording in Streamlit Cloud.
