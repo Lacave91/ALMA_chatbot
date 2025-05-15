@@ -2,6 +2,7 @@
 import os
 import tempfile
 import asyncio
+import pinecone
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -18,8 +19,8 @@ os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "").strip()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
 # Setup LangChain
-pc = Pinecone(api_key=PINECONE_API_KEY)
-index = pc.Index("alma-index")
+pinecone.init(api_key=os.getenv("PINECONE_API_KEY"), environment=os.getenv("PINECONE_ENV"))
+index = pinecone.Index("alma-index")
 embeddings = OpenAIEmbeddings()
 
 vectorstore = PineconeVectorStore(index_name="alma-index", embedding=embeddings)
