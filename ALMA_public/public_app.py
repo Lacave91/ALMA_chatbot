@@ -147,7 +147,7 @@ st.set_page_config(page_title="ALMA - AI Assistant", layout="centered")
 st.title("🌿 ALMA - Your AI Wellness Coach")
 
 #  Show ALMA image
-image = Image.open("ALMA_person.png")
+image = Image.open("ALMA_public/ALMA_person.png")
 st.image(image, width=250) 
 
 lang = st.radio("Language / Idioma", ["English", "Español"])
