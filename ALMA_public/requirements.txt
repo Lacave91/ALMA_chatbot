@@ -1,8 +1,9 @@
+pinecone-client
+langchain
+langchain-openai
 streamlit
 openai
 python-dotenv
-langchain
-langchain-openai
 langchain-pinecone
 pinecone-client
 edge-tts
