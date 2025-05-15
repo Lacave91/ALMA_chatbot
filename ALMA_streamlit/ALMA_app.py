@@ -220,13 +220,12 @@ elif input_mode == "Voice":
 
     st.subheader("🎙️ Speak to ALMA")
     webrtc_ctx = webrtc_streamer(
-        key="alma-audio",
-        mode=WebRtcMode.SENDONLY,
-        in_audio_stream=True,
-        audio_processor_factory=AudioProcessor,
-        media_stream_constraints={"audio": True, "video": False},
-        async_processing=True,
-    )
+    key="example",
+    mode=WebRtcMode.SENDRECV,
+    rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
+    media_stream_constraints={"audio": True, "video": False},
+    async_processing=True,
+)
 
     if st.button("🛑 Transcribe and Ask ALMA"):
         if webrtc_ctx.state.playing:
